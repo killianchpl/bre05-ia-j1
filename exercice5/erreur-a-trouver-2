@@ -1,0 +1,42 @@
+Bien vu pour l'indice ! Le code fonctionne techniquement, mais il y a un problème d'architecture.
+Le Controller ne devrait pas contenir de logique d'accès aux données. Ici, il exécute directement des requêtes SQL, ce qui viole le principe de séparation des responsabilités (Separation of Concerns) du pattern MVC.
+Le problème : le Controller fait le travail du Model.
+La solution : déléguer l'accès aux données à une classe dédiée (Repository ou Model).
+php// UserRepository.php
+class UserRepository
+{
+    public function __construct(private PDO $db)
+    {
+    }
+
+    public function findAll(): array
+    {
+        $query = $this->db->prepare('SELECT * FROM users');
+        $query->execute();
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+}
+php// Controller.php
+class Controller extends AbstractController
+{
+    public function __construct(private UserRepository $userRepository)
+    {
+    }
+
+    public function home(): void
+    {
+        $users = $this->userRepository->findAll();
+        // Passer $users à la vue...
+    }
+}
+Pourquoi c'est mieux :
+
+Le Controller se contente d'orchestrer (il reçoit une requête, délègue, renvoie une réponse)
+Le Repository gère tout ce qui touche aux données
+Si tu changes de base de données ou de structure, tu ne modifies que le Repository
+Le code est plus testable et réutilisable
+
+C'est bien ça que ton exercice attendait ?
+
+
+PROMPT : " envoie du code " Il y a une erreur ici, saura tu la retrouver ? ( indice : c'est un exercice de conception ).

@@ -1,0 +1,21 @@
+Oui ! C'est une erreur classique et vicieuse.
+Il y a un point-virgule en trop après le if :
+cif(argc < 5);  // <- le ; ici !
+Ce point-virgule agit comme une instruction vide. Du coup, le if ne fait rien, et le bloc { printf(...); } qui suit est toujours exécuté, indépendamment de la condition.
+Le compilateur interprète ton code comme ceci :
+cif(argc < 5)
+    ;  // instruction vide : le if "fait" ça
+
+// Bloc indépendant, exécuté systématiquement
+{
+    printf("Not enough arguments.\n");
+}
+Correction :
+cif(argc < 5)
+{
+    printf("Not enough arguments.\n");
+}
+C'est une erreur très fourbe parce que le code compile parfaitement et ne génère aucun warning par défaut. Un bon réflexe est de compiler avec -Wall ou -Wextra qui peuvent détecter ce genre de problème.
+
+
+PROMPT : " envoie du code " il y a une erreur ici ( erreur de syntaxe simple ), saura tu la trouver ?

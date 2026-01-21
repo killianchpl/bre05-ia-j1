@@ -1,0 +1,37 @@
+Bonne question ! Le problème est lié à la gestion asynchrone.
+Dans #submit, tu appelles this.#request(terms) sans await et sans gestion d'erreur. Or #request est une méthode async.
+Conséquences :
+
+Si la requête échoue, tu auras une Unhandled Promise Rejection (l'erreur n'est jamais attrapée)
+Le modal restera affiché indéfiniment en cas d'erreur, car modal.style.display = "none" ne sera jamais atteint
+
+Correction :
+javascriptasync #submit(event)
+{
+    event.preventDefault();
+    let modal = document.querySelector("div.modal");
+    modal.style.display = "grid";
+
+    let search = this.#searchInput.value;
+    let content = this.#contentInput.value;
+
+    let terms = `Bonjour, pourrais-tu me calculer un score SEO...`;
+
+    try {
+        await this.#request(terms);
+    } catch (error) {
+        console.error("Erreur lors de la requête :", error);
+        modal.style.display = "none";
+        // Afficher un message d'erreur à l'utilisateur...
+    }
+}
+Résumé des changements :
+
+#submit devient async
+On utilise await pour attendre la résolution de #request
+On entoure l'appel d'un try/catch pour gérer les erreurs proprement et s'assurer que le modal se ferme quoi qu'il arrive
+
+C'est bien ça l'erreur que tu avais en tête ?
+
+
+PROMPT : " envoie du code ", il y a une erreur complexe dans ce code, essaye de la trouver.

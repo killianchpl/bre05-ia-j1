@@ -1,0 +1,31 @@
+Oui ! L'erreur est liée à la visibilité de la propriété.
+Tu déclares $username comme private dans le constructeur (c'est la syntaxe de constructor property promotion de PHP 8+). Or, une propriété privée n'est accessible que depuis l'intérieur de la classe.
+Quand tu fais echo $user->username; depuis l'extérieur, PHP lève une erreur du type :
+
+Fatal error: Cannot access private property User::$username
+
+Deux solutions possibles :
+
+Rendre la propriété publique (si tu veux un accès direct) :
+
+phppublic function __construct(public string $username)
+
+Garder private et ajouter un getter (meilleure encapsulation) :
+
+phpclass User {
+    public function __construct(private string $username)
+    {
+    }
+
+    public function getUsername(): string
+    {
+        return $this->username;
+    }
+}
+
+$user = new User("Gaston");
+echo $user->getUsername();
+La deuxième approche est généralement préférée en POO car elle te permet de contrôler l'accès aux données internes de ta classe.
+
+
+PROMPT : " envoie du code " , Il y a une erreur la dedans, saura tu la trouver ?
